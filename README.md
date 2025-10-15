@@ -12,135 +12,141 @@ python main.py
 ## Explicação linha a linha
 
 Explicação Linha a Linha
-1: Define a classe Grafo.
+**`class Grafo:`**
+- Define a classe principal que representa um grafo
 
-2: Construtor recebe número de vértices e flag de direcionamento.
+**`def __init__(self, vertices, direcionado=False):`**
+- Método construtor que inicializa o grafo
 
-3: Armazena n (quantidade de vértices).
+**`self.V = vertices`**
+- Armazena o número total de vértices
 
-4: Cria lista de adjacência como dict {vértice: lista_de_vizinhos}.
+**`self.grafo = {v: [] for v in range(vertices)}`**
+- Cria um dicionário onde cada vértice tem uma lista vazia de vizinhos
 
-5: Guarda se o grafo é direcionado.
+**`self.direcionado = direcionado`**
+- Define se o grafo é direcionado ou não
 
-6: Linha em branco (organização).
+## Método adicionar_aresta
 
-7: Define método para adicionar aresta (u, v).
+**`def adicionar_aresta(self, u, v):`**
+- Método para adicionar uma aresta entre dois vértices
 
-8: Adiciona v na lista de adjacência de u.
+**`self.grafo[u].append(v)`**
+- Adiciona o vértice v à lista de adjacência de u
 
-9: Se não direcionado, também adiciona u em v.
+**`if not self.direcionado:`**
+- Verifica se o grafo não é direcionado
 
-10: Fecha o if.
+**`self.grafo[v].append(u)`**
+- Se não for direcionado, adiciona u à lista de v (bidirecional)
 
-11: Linha em branco.
+## Método eh_seguro
 
-12: Define método que checa se é válido inserir v na posição pos do caminho.
+**`def eh_seguro(self, v, pos, caminho):`**
+- Verifica se é seguro adicionar um vértice ao caminho
 
-13: Verifica se v é vizinho do último vértice adicionado (caminho[pos-1]).
+**`if v not in self.grafo[caminho[pos-1]]:`**
+- Checa se v é adjacente ao último vértice adicionado
 
-14: Se não for vizinho, rejeita.
+**`return False`**
+- Retorna falso se não for adjacente
 
-15: Linha em branco.
+**`if v in caminho:`**
+- Verifica se o vértice já está no caminho
 
-16: Verifica se v já foi usado no caminho (evita repetição).
+**`return False`**
+- Retorna falso se o vértice já foi visitado
 
-17: Se repetido, rejeita.
+**`return True`**
+- Retorna verdadeiro se passar em todas as verificações
 
-18: Linha em branco.
+## Método encontrar_caminho_hamiltoniano_util
 
-19: Caso passe nas verificações, aceita.
+**`def encontrar_caminho_hamiltoniano_util(self, caminho, pos):`**
+- Método recursivo auxiliar para backtracking
 
-20: Linha em branco.
+**`if pos == self.V:`**
+- Caso base: verifica se todos os vértices foram visitados
 
-21: Método recursivo auxiliar do backtracking.
+**`return True`**
+- Retorna verdadeiro quando o caminho está completo
 
-22: Caso base: se já posicionou V vértices, encontrou caminho completo.
+**`for v in range(self.V):`**
+- Itera por todos os vértices possíveis
 
-23: Retorna sucesso.
+**`if self.eh_seguro(v, pos, caminho):`**
+- Verifica se o vértice pode ser adicionado
 
-24: Linha em branco.
+**`caminho[pos] = v`**
+- Adiciona o vértice ao caminho
 
-25: Itera por todos os vértices como possíveis candidatos para a posição atual.
+**`if self.encontrar_caminho_hamiltoniano_util(caminho, pos+1):`**
+- Chamada recursiva para a próxima posição
 
-26: Testa se é seguro colocar v nesta posição.
+**`return True`**
+- Propaga o sucesso da recursão
 
-27: Coloca v no caminho (faz a escolha).
+**`caminho[pos] = -1`**
+- Backtracking: remove o vértice se não levar à solução
 
-28: Linha em branco.
+**`return False`**
+- Retorna falso se nenhum vértice funcionar
 
-29: Avança recursivamente para a próxima posição.
+## Método encontrar_caminho_hamiltoniano
 
-30: Se a recursão retornar sucesso, propaga sucesso.
+**`def encontrar_caminho_hamiltoniano(self):`**
+- Método principal para encontrar o caminho hamiltoniano
 
-31: Linha em branco.
+**`caminho = [-1] * self.V`**
+- Inicializa o caminho com valores -1 (não visitado)
 
-32: Backtrack: desfaz a escolha (marca posição como -1).
+**`for inicio in range(self.V):`**
+- Tenta cada vértice como ponto de partida
 
-33: Linha em branco.
+**`caminho[0] = inicio`**
+- Define o vértice inicial
 
-34: Se nenhum v funcionar, retorna falha para este ramo.
+**`if self.encontrar_caminho_hamiltoniano_util(caminho, 1):`**
+- Chama o método auxiliar começando da posição 1
 
-35: Linha em branco.
+**`return caminho`**
+- Retorna o caminho encontrado
 
-36: Método público que tenta achar caminho a partir de diferentes vértices iniciais.
+**`print("Não existe caminho hamiltoniano")`**
+- Mensagem de falha (caractere corrompido no original)
 
-37: Inicializa caminho com -1 (posição vazia).
+**`return None`**
+- Retorna None se não encontrar caminho
 
-38: Linha em branco.
+## Bloco Principal
 
-39: Itera todos os possíveis vértices iniciais.
+**`if __name__ == "__main__":`**
+- Garante que o código só executa quando o arquivo é rodado diretamente
 
-40: Fixa o vértice inicial na posição 0.
+**`g = Grafo(5, direcionado=False)`**
+- Cria um grafo não direcionado com 5 vértices
 
-41: Linha em branco.
+**`g.adicionar_aresta(0, 1)`** até **`g.adicionar_aresta(3, 4)`**
+- Adiciona as arestas que formam o grafo
 
-42: Chama o auxiliar para preencher da posição 1 em diante.
+**`caminho = g.encontrar_caminho_hamiltoniano()`**
+- Executa a busca pelo caminho hamiltoniano
 
-43: Se encontrar, retorna o caminho.
+**`if caminho:`**
+- Verifica se um caminho foi encontrado
 
-44: Linha em branco.
+**`print("Caminho Hamiltoniano encontrado:")`**
+- Mensagem de sucesso
 
-45: Se nenhum início funcionar, informa ausência de caminho no console.
+**`print(" => ".join(map(str, caminho)))`**
+- Formata e exibe o caminho encontrado
 
-46: Retorna None (falha).
+**`else:`**
+- Caso nenhum caminho seja encontrado
 
-47: Linha em branco.
-
-48: Linha em branco.
-
-49: Ponto de entrada do script (executa apenas quando rodado diretamente).
-
-50: Cria grafo não direcionado com 5 vértices.
-
-51: Adiciona aresta (0, 1).
-
-52: Adiciona aresta (0, 3).
-
-53: Adiciona aresta (1, 2).
-
-54: Adiciona aresta (1, 3).
-
-55: Adiciona aresta (1, 4).
-
-56: Adiciona aresta (2, 4).
-
-57: Adiciona aresta (3, 4).
-
-58: Linha em branco.
-
-59: Invoca a busca por caminho hamiltoniano.
-
-60: Linha em branco.
-
-61: Se caminho encontrado...
-
-62: Imprime rótulo de sucesso.
-
-63: Imprime a sequência de vértices formatada.
-
-64: Caso contrário...
-
-65: Imprime mensagem de falha.
+**`print("Nenhum caminho hamiltoniano encontrado")`**
+- Mensagem de falha final
 
 ---
 
